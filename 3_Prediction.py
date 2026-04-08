@@ -27,6 +27,19 @@ import streamlit as st
 from Scripts.src.utils import predict
 import pandas as pd
 
+# Mapping dictionaries
+severity_map = {
+    0: "Low",
+    1: "Medium",
+    2: "High",
+    3: "Critical"
+}
+
+risk_map = {
+    0: "No Risk",
+    1: "Risk"
+}
+
 st.title("Severity & Risk Prediction")
 
 # -----------------------------
@@ -47,6 +60,7 @@ value = st.slider("Value For Money", 1, 5, 3)
 
 if st.button("Predict"):
 
+    # ✅ ratings must be defined FIRST
     ratings = {
         "Overall_Rating": overall_rating,
         "Seat Comfort": seat_comfort,
@@ -58,11 +72,28 @@ if st.button("Predict"):
         "Value For Money": value
     }
 
+    # ✅ THEN call predict
     severity, risk, prob = predict(review_text, ratings)
 
-    st.success(f"Severity Prediction: {severity}")
-    st.warning(f"Risk Prediction: {risk}")
-    st.info(f"Risk Probability: {prob:.2f}")
+    # ✅ THEN mapping + UI
+    severity_text = severity_map.get(severity, "Unknown")
+    risk_text = risk_map.get(risk, "Unknown")
+
+    if severity_text == "Critical":
+        st.error(f"Severity: {severity_text} 🚨")
+    elif severity_text == "High":
+        st.warning(f"Severity: {severity_text}")
+    elif severity_text == "Medium":
+        st.info(f"Severity: {severity_text}")
+    else:
+        st.success(f"Severity: {severity_text}")
+
+    if risk_text == "Risk":
+        st.error(f"Risk: {risk_text} ⚠️")
+    else:
+        st.success(f"Risk: {risk_text} ✅")
+
+    st.info(f"Confidence: {round(prob*100, 2)}%")
 
 # -----------------------------
 # Bulk Prediction
@@ -109,7 +140,10 @@ if uploaded_file is not None:
 
         severity, risk, prob = predict(text, ratings)
 
-        results.append([severity, risk, prob])
+        severity_text = severity_map.get(severity, "Unknown")
+        risk_text = risk_map.get(risk, "Unknown")
+
+        results.append([severity_text, risk_text, prob])
 
     df["Predicted_Severity"] = [r[0] for r in results]
     df["Risk_Flag"] = [r[1] for r in results]

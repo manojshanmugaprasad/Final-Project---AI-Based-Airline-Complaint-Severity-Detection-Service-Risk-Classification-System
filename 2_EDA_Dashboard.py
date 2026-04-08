@@ -86,3 +86,27 @@ if os.path.exists(pr_path):
     st.image(pr_path)
 else:
     st.warning("Precision-Recall curve image not found")
+
+import streamlit as st
+from PIL import Image
+
+st.subheader("Sentiment Analysis")
+
+st.markdown("### Sentiment Polarity Distribution")
+img1 = Image.open("D:/AI-Based Airline Complaint Severity Detection & Service Risk Classification System/output.png")
+st.image(img1, use_container_width=True)
+
+st.markdown("### Sentiment vs Severity")
+img2 = Image.open("D:/AI-Based Airline Complaint Severity Detection & Service Risk Classification System/output 23.png")
+st.image(img2, use_container_width=True)
+
+st.markdown("### Sentiment vs Recommendation")
+img3 = Image.open("D:/AI-Based Airline Complaint Severity Detection & Service Risk Classification System/output 32.png")
+st.image(img3, use_container_width=True)
+
+st.markdown("""
+**Insights:**
+- Negative sentiment strongly correlates with High and Critical complaints  
+- Positive sentiment is mostly associated with Low severity  
+- Not recommended reviews show strong negative polarity  
+""")
